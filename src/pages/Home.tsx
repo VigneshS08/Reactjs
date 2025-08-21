@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 import { Card, CardDescription, CardTitle } from '../components/ui/card'
 import axios from 'axios';
 import { Button } from '../components/ui/button';
+import { Badge } from "@/components/ui/badge"
 
 export interface Loops{  //initialize the values of objects
-    id?:number,
+    id:number,
     author?:string,
     content?:string,
     tags?:string[],
@@ -28,6 +29,7 @@ export interface Loops{  //initialize the values of objects
 // array.splice(1,2,'Kiwi','Tomato'); // in this start the index at 1 and remove it from the 1 index of 2 count of values and add kiwi and tomato so => "Banana",'Kiwi','Tomato',"Apple", "Mango"
 export default function Home() {
     const [quote,setQuote]= useState<Loops[]>([]);
+    const[filter,SetFilter]=useState<Loops>();
     const accessQuote = ()=>{
         axios.get('https://api.freeapi.app/api/v1/public/quotes/quote/random').then(function (response) {
             var responseData = response.data.data;
@@ -50,32 +52,73 @@ export default function Home() {
         })
     }
 
+    const View =(id:number)=>{
+        var getFilter=quote.filter((value)=>{
+            return value.id==id;
+        });
+        SetFilter(getFilter[0]);
+    }
+
     useEffect(()=>{
         accessQuote();
     },[]);
-  return (
+    return (
         <div className='flex justify-center items-center'>
-            <div className='max-w-[600px]'>
-                {
-                    quote.map((value,index)=>{
-                        return (
-                            <div key={index} className='py-3'>
-                                <Card className='px-4'>
-                                    <div className='flex justify-between items-center'>
-                                        <CardTitle>{value.author}</CardTitle>
-                                        <Button>{value?.dateAdded?.toString()}</Button>
+            <div className='max-w-screen-xl'>
+                <div className='grid grid-cols-2 gap-3'>
+                    <div>
+                        {
+                            quote.map((value,index)=>{
+                                return (
+                                    <div key={index} className='py-3'>
+                                        <Card className='px-4'>
+                                            <div className='flex justify-between items-center'>
+                                                <CardTitle>{value.author}</CardTitle>
+                                                <Button>{value?.dateAdded?.toString()}</Button>
+                                            </div>
+                                            <CardDescription>{value.content}</CardDescription>
+                                            {
+                                                value?.tags?.map((tag,key1)=>{
+                                                    return (
+                                                        <div key={key1}>
+                                                            <Badge variant="outline">{tag}</Badge>
+                                                        </div>
+                                                    )
+                                                })
+                                            }
+                                            <div className="flex justify-center items-center">
+                                                <Button className="w-25" variant="outline" onClick={()=>View(value.id)}>View</Button>
+                                            </div>
+                                        </Card>
                                     </div>
-                                    <CardDescription>{value.content}</CardDescription>
-                                </Card>
+                                )
+                            })
+                        }
+                    </div>
+                    <div className='sticky top-3 h-fit py-3'>
+                        <Card className='px-4'>
+                            <div className='flex justify-between items-center'>
+                                <CardTitle>{filter?.author}</CardTitle>
+                                <Button>{filter?.dateAdded?.toString()}</Button>
                             </div>
-                        )
-                    })
-                }
-                <div className="flex justify-center items-center">
-                    <Button variant="outline" onClick={()=>accessQuote()}>LoadMore</Button>
+                            <CardDescription>{filter?.content}</CardDescription>
+                            {
+                                filter?.tags?.map((tag,key1)=>{
+                                    return (
+                                        <div key={key1}>
+                                            <Badge variant="outline">{tag}</Badge>
+                                        </div>
+                                    )
+                                })
+                            }
+                        </Card>
+                    </div>
+                    <div className="flex justify-center items-center">
+                        <Button variant="outline" onClick={()=>accessQuote()}>LoadMore</Button>
+                    </div>
                 </div>
             </div>
         </div>
-  )
+    )
 }
 
