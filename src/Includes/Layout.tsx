@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router';
-import Header from './Header';
-import Footer from './Footer';
+import Header from '../LivoLab/Components/Header';
+import Footer from '../LivoLab/Components/Footer';
 
 function Layout() {
   return (

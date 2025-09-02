@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Card, CardDescription, CardTitle } from '../components/ui/card'
 import axios from 'axios';
 import { Button } from '../components/ui/button';
-import { Badge } from "@/components/ui/badge"
+import { Badge } from "@/components/ui/badge";
 
 export interface Loops{  //initialize the values of objects
     id:number,
@@ -26,7 +26,7 @@ export interface Loops{  //initialize the values of objects
 
 //array.slice(-5,2) // in this -5 count from end and start the index, and 2 it will show till 2 index => "Banana", "Orange"
 
-// array.splice(1,2,'Kiwi','Tomato'); // in this start the index at 1 and remove it from the 1 index of 2 count of values and add kiwi and tomato so => "Banana",'Kiwi','Tomato',"Apple", "Mango"
+// array.splice(1,2,'Kiwi','Tomato'); // in this start the index at 1 and remove it from the (1 index) of 2 count of values and add kiwi and tomato so => "Banana",'Kiwi','Tomato',"Apple", "Mango"
 export default function Home() {
     const [quote,setQuote]= useState<Loops[]>([]);
     const[filter,SetFilter]=useState<Loops>();
@@ -34,7 +34,7 @@ export default function Home() {
         axios.get('https://api.freeapi.app/api/v1/public/quotes/quote/random').then(function (response) {
             var responseData = response.data.data;
             var tagArray : string[]=[]; //for initialize the array string values
-            tagArray.push(responseData.tags);
+            tagArray=[...tagArray,...responseData.tags];
             var handleResponse : Loops={  // here we need to initialize the value with interface loops, because we assign values with objects
                 id:responseData.id,
                 author:responseData.author,
@@ -63,9 +63,9 @@ export default function Home() {
         accessQuote();
     },[]);
     return (
-        <div className='flex justify-center items-center'>
+        <div className='flex justify-center items-center px-4'>
             <div className='max-w-screen-xl'>
-                <div className='grid grid-cols-2 gap-3'>
+                <div className='grid lg:grid-cols-2 grid-cols-1 gap-3'>
                     <div>
                         {
                             quote.map((value,index)=>{
@@ -77,15 +77,15 @@ export default function Home() {
                                                 <Button>{value?.dateAdded?.toString()}</Button>
                                             </div>
                                             <CardDescription>{value.content}</CardDescription>
+                                            <div className='flex gap-3'>
                                             {
                                                 value?.tags?.map((tag,key1)=>{
                                                     return (
-                                                        <div key={key1}>
-                                                            <Badge variant="outline">{tag}</Badge>
-                                                        </div>
+                                                        <Badge key={key1} variant="outline">{tag}</Badge>
                                                     )
                                                 })
                                             }
+                                            </div>
                                             <div className="flex justify-center items-center">
                                                 <Button className="w-25" variant="outline" onClick={()=>View(value.id)}>View</Button>
                                             </div>
@@ -102,15 +102,15 @@ export default function Home() {
                                 <Button>{filter?.dateAdded?.toString()}</Button>
                             </div>
                             <CardDescription>{filter?.content}</CardDescription>
+                            <div className='flex gap-3'>
                             {
-                                filter?.tags?.map((tag,key1)=>{
+                                filter?.tags?.map((tag1,key1)=>{
                                     return (
-                                        <div key={key1}>
-                                            <Badge variant="outline">{tag}</Badge>
-                                        </div>
-                                    )
-                                })
+                                            <Badge key={key1} variant="outline">{tag1}</Badge>
+                                        )
+                                    })
                             }
+                            </div>
                         </Card>
                     </div>
                     <div className="flex justify-center items-center">
